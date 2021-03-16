@@ -2,39 +2,28 @@ from enum import Enum
 import requests
 
 BASE_URL = "https://www.medino.com/"
+PAGE_LIMIT = 3
 
 
 class ProductPage(Enum):
-    # category pages on the website, a subset of top-level product pages
-    class Category(Enum):
-        ACCESSORIES = "accessories"
-        ACHES_AND_PAINS = "aches-and-pain"
-        ALLERGY_AND_HAYFEVER = "allergy-and-hayfever"
-
-        def __init__(self, value):
-            self.url_part = "category/" + value
-
-    # top-level product pages
-    POPULAR = "popular-products"
-    ACCESSORIES = Category.ACCESSORIES.url_part
-    ACHES_AND_PAINS = Category.ACHES_AND_PAINS.url_part
-    ALLERGY_AND_HAYFEVER = Category.ALLERGY_AND_HAYFEVER.url_part
-
-    def __init__(self, page_limit=3):
-        self.__page_limit = "up-to-page=" + str(page_limit)
+    def __init__(self, value):
+        self.__page_limit = "up-to-page=" + str(PAGE_LIMIT)
         self.__sort_by = ""
-        self.__filter = ""
+        self.__filter_by = ""
 
     def __build_url(self):
-        return BASE_URL + self.value + "?" + self.__page_limit + self.__sort_by + self.__filter
+        return BASE_URL + self.url_part() + self.__page_limit + self.__sort_by + self.__filter_by
+
+    def url_part(self):
+        return
 
     # setters for search filters
     def sort_by(self, sort_enum):
-        self.__sort_by = sort_enum.url_part if sort_enum is not None else ""
+        self.__sort_by = "&sort-by=" + sort_enum.value if sort_enum else ""
         return self
 
     def filter_by(self, filter_enum):
-        self.__filter = filter_enum.url_part if filter_enum is not None else ""
+        self.__filter_by = "&tag=" + filter_enum.value if filter_enum else ""
         return self
 
     # getters
@@ -49,14 +38,40 @@ class ProductPage(Enum):
             raise Exception("Bad request")
 
 
+class Category(ProductPage):
+    ACCESSORIES = "accessories"
+    ACHES_AND_PAINS = "aches-and-pain"
+    ALLERGY_AND_HAYFEVER = "allergy-and-hayfever"
+
+    def url_part(self):
+        return "category/" + self.value + "?"
+
+
+class Popular(ProductPage):
+    POPULAR = "popular-products"
+
+    def url_part(self):
+        return self.value + "?"
+
+
+class Search(ProductPage):
+    SEARCH = ""
+
+    @staticmethod
+    def search_by(keyword):
+        enum = Search.SEARCH
+        enum._value_ = "search?q=" + keyword
+        return enum
+
+    def url_part(self):
+        return self.value + "&"
+
+
 class SortBy(Enum):
     POPULARITY = "popularity"
     ALPHABETICAL = "alphabetical"
     PRICE_HIGH_TO_LOW = "price-high-to-low"
     PRICE_LOW_TO_HIGH = "price-low-to-high"
-
-    def __init__(self, value):
-        self.url_part = "&sort-by=" + value
 
 
 class FilterBy(Enum):
@@ -66,10 +81,14 @@ class FilterBy(Enum):
     VEGAN = "vegan"
     VEGETARIAN = "vegetarian"
 
-    def __init__(self, value):
-        self.url_part = "&tag=" + value
-
 
 if __name__ == "__main__":
-    print(ProductPage.POPULAR.sort_by(SortBy.POPULARITY).filter_by(FilterBy.FOR_CHILDREN).url())
+    # print(Test.VALUES.value)
+    # print(ProductPage.search_by("hi").value)
+    # a = Search.SEARCH("hi")
+    # print(aż)
+    # print(ProductPage.POPULAR.sort_by(SortBy.PRICE_LOW_TO_HIGH).filter_by(FilterBy.FOR_CHILDREN).url())
+    # print(Category.ACCESSORIES.sort_by(SortBy.PRICE_LOW_TO_HIGH).filter_by(FilterBy.FOR_CHILDREN).url())
+    print(Popular.POPULAR.sort_by(SortBy.PRICE_HIGH_TO_LOW).filter_by(FilterBy.VEGAN).url())
+    print(Search.search_by("a").url())
 
