@@ -15,9 +15,8 @@ def get_products(html):
 
 
 if __name__ == "__main__":
-    html = ProductPage.ACCESSORIES.sort_by(SortBy.POPULARITY).filter_by(FilterBy.VEGAN).html()
+    html = Popular.show_all().sort_by(SortBy.PRICE_HIGH_TO_LOW).filter_by(FilterBy.VEGAN).html()
     medino_products = get_products(html)
-    medino_products.save_as_csv("student.csv")
-    print(medino_products.display_as_table())
+    print(medino_products.display_as_csv(5))
 
 

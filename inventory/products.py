@@ -15,5 +15,11 @@ class Products:
             for row in self.product_list:
                 write.writerow(row)
 
-    def display_as_table(self):
-        return tabulate(self.product_list[1:], headers=self.product_list[0])
+    def display_as_csv(self, max_results):
+        output = ""
+        for row in self.product_list[1:max_results+1]:
+            output += ",".join(row).replace("£", "") + "\n"
+        return output
+
+    def display_as_table(self, v):
+        return tabulate(self.product_list[:v+1], headers="firstrow")
