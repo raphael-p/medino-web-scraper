@@ -1,9 +1,28 @@
 from bs4 import BeautifulSoup
-from productPage import *
+import requests
 from products import *
 
 
-def get_products(html):
+def get_html(url):
+    """
+    Extracts the html layer from a webpage
+    :param url: a valid webpage url
+    :rtype: String
+    """
+    request = requests.get(url)
+    if request.status_code == 200:
+        return request.content
+    else:
+        raise Exception("Bad request")
+
+
+def get_products(url):
+    """
+    Gets the product names and prices from a url, and stores them in Products
+    :param url: a url in the medino.com domain
+    :rtype: Products
+    """
+    html = get_html(url)
     soup = BeautifulSoup(html, 'html.parser')
     products = Products()
     for product in soup.find_all('div', class_='product-list-item'):
@@ -12,11 +31,3 @@ def get_products(html):
             product.select_one('span.product-list-price-span').text
         )
     return products
-
-
-if __name__ == "__main__":
-    html = Popular.show_all().sort_by(SortBy.PRICE_HIGH_TO_LOW).filter_by(FilterBy.VEGAN).html()
-    medino_products = get_products(html)
-    print(medino_products.display_as_csv(5))
-
-

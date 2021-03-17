@@ -1,11 +1,16 @@
 from enum import Enum
-import requests
+from scraper import *
+
 
 BASE_URL = "https://www.medino.com/"
 PAGE_LIMIT = 10
 
 
-class ProductPage(Enum):
+class UrlBuilder(Enum):
+    """
+    Virtual enum class meant to generate the url of product page on medino.
+    :implemented by: Category, Popular, Search
+    """
     def __init__(self, value):
         self.__page_limit = "up-to-page=" + str(PAGE_LIMIT)
         self.__sort_by = ""
@@ -15,30 +20,38 @@ class ProductPage(Enum):
         return BASE_URL + self.url_part() + self.__page_limit + self.__sort_by + self.__filter_by
 
     def url_part(self):
+        """
+        Abstract method which is implemented by subclasses of UrlBuilder
+        :rtype: String
+        """
         return ""
 
     # setters for search filters
     def sort_by(self, sort_enum):
+        """
+        :param sort_enum: enum containing the type of sorting to apply
+        :rtype: UrlBuilder
+        """
         self.__sort_by = "&sort-by=" + sort_enum.value if sort_enum else ""
         return self
 
     def filter_by(self, filter_enum):
+        """
+        :param filter_enum: enum containing the filter to apply
+        :rtype: UrlBuilder
+        """
         self.__filter_by = "&tag=" + filter_enum.value if filter_enum else ""
         return self
 
-    # getters
-    def url(self):
-        return self.__build_url()
-
-    def html(self):
-        request = requests.get(self.__build_url())
-        if request.status_code == 200:
-            return request.content
-        else:
-            raise Exception("Bad request")
+    def fetch(self):
+        """
+        Passes the url to the scraper, which retrieves the product information on that page
+        :rtype: Products
+        """
+        return get_products(self.__build_url())
 
 
-class Category(ProductPage):
+class Category(UrlBuilder):
     ACCESSORIES = "accessories"
     ACHES_AND_PAINS = "aches-and-pain"
     ALLERGY_AND_HAYFEVER = "allergy-and-hayfever"
@@ -47,7 +60,7 @@ class Category(ProductPage):
         return "category/" + self.value + "?"
 
 
-class Popular(ProductPage):
+class Popular(UrlBuilder):
     __POPULAR = "popular-products"
 
     @staticmethod
@@ -58,7 +71,7 @@ class Popular(ProductPage):
         return self.value + "?"
 
 
-class Search(ProductPage):
+class Search(UrlBuilder):
     __SEARCH = ""
 
     @staticmethod
@@ -87,13 +100,8 @@ class FilterBy(Enum):
 
 
 if __name__ == "__main__":
-    # print(Test.VALUES.value)
-    # print(ProductPage.search_by("hi").value)
-    # a = Search.SEARCH("hi")
-    # print(aż)
-    # print(ProductPage.POPULAR.sort_by(SortBy.PRICE_LOW_TO_HIGH).filter_by(FilterBy.FOR_CHILDREN).url())
-    # print(Category.ACCESSORIES.sort_by(SortBy.PRICE_LOW_TO_HIGH).filter_by(FilterBy.FOR_CHILDREN).url())
-    print(Popular.show_all().sort_by(SortBy.PRICE_HIGH_TO_LOW).filter_by(FilterBy.VEGAN).url())
-    # print(Search.search_by("a").url())
-    print(Search.search_by("hello").filter_by(FilterBy.VEGETARIAN).url())
+    products = Search.search_by("allergy").filter_by(FilterBy.VEGETARIAN).fetch()
+    print(products.display_as_table(5))
+    print(products.display_as_csv(5))
+    products.save_as_csv("my.csv")
 
