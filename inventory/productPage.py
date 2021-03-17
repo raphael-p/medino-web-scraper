@@ -2,7 +2,7 @@ from enum import Enum
 import requests
 
 BASE_URL = "https://www.medino.com/"
-PAGE_LIMIT = 3
+PAGE_LIMIT = 10
 
 
 class ProductPage(Enum):
@@ -15,7 +15,7 @@ class ProductPage(Enum):
         return BASE_URL + self.url_part() + self.__page_limit + self.__sort_by + self.__filter_by
 
     def url_part(self):
-        return
+        return ""
 
     # setters for search filters
     def sort_by(self, sort_enum):
@@ -48,18 +48,22 @@ class Category(ProductPage):
 
 
 class Popular(ProductPage):
-    POPULAR = "popular-products"
+    __POPULAR = "popular-products"
+
+    @staticmethod
+    def show_all():
+        return Popular.__POPULAR
 
     def url_part(self):
         return self.value + "?"
 
 
 class Search(ProductPage):
-    SEARCH = ""
+    __SEARCH = ""
 
     @staticmethod
     def search_by(keyword):
-        enum = Search.SEARCH
+        enum = Search.__SEARCH
         enum._value_ = "search?q=" + keyword
         return enum
 
@@ -89,6 +93,7 @@ if __name__ == "__main__":
     # print(aż)
     # print(ProductPage.POPULAR.sort_by(SortBy.PRICE_LOW_TO_HIGH).filter_by(FilterBy.FOR_CHILDREN).url())
     # print(Category.ACCESSORIES.sort_by(SortBy.PRICE_LOW_TO_HIGH).filter_by(FilterBy.FOR_CHILDREN).url())
-    print(Popular.POPULAR.sort_by(SortBy.PRICE_HIGH_TO_LOW).filter_by(FilterBy.VEGAN).url())
-    print(Search.search_by("a").url())
+    print(Popular.show_all().sort_by(SortBy.PRICE_HIGH_TO_LOW).filter_by(FilterBy.VEGAN).url())
+    # print(Search.search_by("a").url())
+    print(Search.search_by("hello").filter_by(FilterBy.VEGETARIAN).url())
 
