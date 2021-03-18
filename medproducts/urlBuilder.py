@@ -2,30 +2,25 @@ from enum import Enum
 from medproducts.scraper import *
 
 
-BASE_URL = "https://www.medino.com/"
+DOMAIN = "https://www.medino.com/"
 PAGE_LIMIT = 10
 
 
 class UrlBuilder(Enum):
     """
     Virtual enum class meant to generate the url of product page on medino.
-    :implemented by: Category, Popular, Search
+    :implemented by: Browse, Search
     """
 
     def __init__(self, value):
-        self.__page_limit = "up-to-page=" + str(PAGE_LIMIT)
+        self.__page_limit = str(PAGE_LIMIT)
         self.__sort_by = ""
         self.__filter_by = ""
+        self._keyword = ""
 
     def __build_url(self):
-        return BASE_URL + self.url_part() + self.__page_limit + self.__sort_by + self.__filter_by
-
-    def url_part(self):
-        """
-        Abstract method which is implemented by subclasses of UrlBuilder
-        :rtype: String
-        """
-        return ""
+        return compose_url(DOMAIN, self.value, q=self._keyword, up_to_page=self.__page_limit,
+                           sort_by=self.__sort_by, tag=self.__filter_by)
 
     # setters for search filters
     def sort_by(self, sort_enum):
@@ -33,7 +28,7 @@ class UrlBuilder(Enum):
         :param sort_enum: enum containing the type of sorting to apply
         :rtype: UrlBuilder
         """
-        self.__sort_by = "&sort-by=" + sort_enum.value if sort_enum else ""
+        self.__sort_by = sort_enum.value if sort_enum else ""
         return self
 
     def filter_by(self, filter_enum):
@@ -41,7 +36,7 @@ class UrlBuilder(Enum):
         :param filter_enum: enum containing the filter to apply
         :rtype: UrlBuilder
         """
-        self.__filter_by = "&tag=" + filter_enum.value if filter_enum else ""
+        self.__filter_by = filter_enum.value if filter_enum else ""
         return self
 
     def url(self):
@@ -60,37 +55,21 @@ class UrlBuilder(Enum):
         return get_products(get_html(self.__build_url()))
 
 
-class Category(UrlBuilder):
-    ACCESSORIES = "accessories"
-    ACHES_AND_PAINS = "aches-and-pain"
-    ALLERGY_AND_HAYFEVER = "allergy-and-hayfever"
-
-    def url_part(self):
-        return "category/" + self.value + "?"
-
-
-class Popular(UrlBuilder):
-    __POPULAR = "popular-products"
-
-    @staticmethod
-    def show_all():
-        return Popular.__POPULAR
-
-    def url_part(self):
-        return self.value + "?"
+class Browse(UrlBuilder):
+    POPULAR = "popular-products"
+    ACCESSORIES = "category/accessories"
+    ACHES_AND_PAINS = "category/aches-and-pain"
+    ALLERGY_AND_HAYFEVER = "category/allergy-and-hayfever"
 
 
 class Search(UrlBuilder):
-    __SEARCH = ""
+    __SEARCH = "search"
 
     @staticmethod
-    def search_by(keyword):
+    def query(keyword):
         enum = Search.__SEARCH
-        enum._value_ = "search?q=" + keyword
+        enum._keyword = keyword
         return enum
-
-    def url_part(self):
-        return self.value + "&"
 
 
 class SortBy(Enum):
@@ -108,19 +87,21 @@ class FilterBy(Enum):
     VEGETARIAN = "vegetarian"
 
 
+def compose_url(domain, path, **params):
+    url = domain + path
+    is_first = True
+    for key, value in params.items():
+        if not value:
+            continue
+        separator = "?" if is_first else "&"
+        is_first = False
+        url += separator + key.replace("_", "-") + "=" + value
+    return url
+
+
 if __name__ == "__main__":
-    search_1 = Search.search_by("allergy").filter_by(FilterBy.VEGETARIAN).url()
-    print(search_1)
-    search_2 = Search.search_by("allergy")\
-        .sort_by(SortBy.PRICE_HIGH_TO_LOW).sort_by(SortBy.PRICE_LOW_TO_HIGH)\
-        .filter_by(FilterBy.FOR_CHILDREN).filter_by(FilterBy.VEGETARIAN).url()
-    print(search_2)
-    category_1 = Category.ACHES_AND_PAINS.ACCESSORIES.url()
-    print(category_1)
-    category_2 = Category.ALLERGY_AND_HAYFEVER.\
-        sort_by(SortBy.PRICE_LOW_TO_HIGH).filter_by(FilterBy.FOR_MEN)\
-        .sort_by(SortBy.ALPHABETICAL).filter_by(FilterBy.VEGAN).url()
-    print(category_2)
-    popularity = Popular.show_all().sort_by(SortBy.POPULARITY).url()
-    print(popularity)
+    search = Search.search_by("hi").filter_by(FilterBy.VEGAN).url()
+    print(search)
+    # popularity = UrlBuilder.Browse.popular().sort_by(SortBy.POPULARITY).url()
+    # print(popularity)
 
