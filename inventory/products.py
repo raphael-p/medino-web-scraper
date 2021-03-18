@@ -6,6 +6,7 @@ class Products:
     """
     Stores the results of the data extraction (name and price of each product)
     """
+
     def __init__(self):
         self.product_list = [['Name', 'Price']]
 

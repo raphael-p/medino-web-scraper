@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-from products import *
+from inventory.products import *
 
 
 def get_html(url):
@@ -16,13 +16,12 @@ def get_html(url):
         raise Exception("Bad request")
 
 
-def get_products(url):
+def get_products(html):
     """
     Gets the product names and prices from a url, and stores them in Products
-    :param url: a url in the medino.com domain
+    :param html: html from a page in the medino.com domain
     :rtype: Products
     """
-    html = get_html(url)
     soup = BeautifulSoup(html, 'html.parser')
     products = Products()
     for product in soup.find_all('div', class_='product-list-item'):

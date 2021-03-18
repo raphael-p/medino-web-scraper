@@ -1,5 +1,5 @@
 from enum import Enum
-from scraper import *
+from inventory.scraper import *
 
 
 BASE_URL = "https://www.medino.com/"
@@ -11,6 +11,7 @@ class UrlBuilder(Enum):
     Virtual enum class meant to generate the url of product page on medino.
     :implemented by: Category, Popular, Search
     """
+
     def __init__(self, value):
         self.__page_limit = "up-to-page=" + str(PAGE_LIMIT)
         self.__sort_by = ""
@@ -43,12 +44,20 @@ class UrlBuilder(Enum):
         self.__filter_by = "&tag=" + filter_enum.value if filter_enum else ""
         return self
 
+    def url(self):
+        """
+        For use in unit testing
+        :return: url
+        :rtype: String
+        """
+        return self.__build_url()
+
     def fetch(self):
         """
         Passes the url to the scraper, which retrieves the product information on that page
         :rtype: Products
         """
-        return get_products(self.__build_url())
+        return get_products(get_html(self.__build_url()))
 
 
 class Category(UrlBuilder):
@@ -100,8 +109,18 @@ class FilterBy(Enum):
 
 
 if __name__ == "__main__":
-    products = Search.search_by("allergy").filter_by(FilterBy.VEGETARIAN).fetch()
-    print(products.display_as_table(5))
-    print(products.display_as_csv(5))
-    products.save_as_csv("my.csv")
+    search_1 = Search.search_by("allergy").filter_by(FilterBy.VEGETARIAN).url()
+    print(search_1)
+    search_2 = Search.search_by("allergy")\
+        .sort_by(SortBy.PRICE_HIGH_TO_LOW).sort_by(SortBy.PRICE_LOW_TO_HIGH)\
+        .filter_by(FilterBy.FOR_CHILDREN).filter_by(FilterBy.VEGETARIAN).url()
+    print(search_2)
+    category_1 = Category.ACHES_AND_PAINS.ACCESSORIES.url()
+    print(category_1)
+    category_2 = Category.ALLERGY_AND_HAYFEVER.\
+        sort_by(SortBy.PRICE_LOW_TO_HIGH).filter_by(FilterBy.FOR_MEN)\
+        .sort_by(SortBy.ALPHABETICAL).filter_by(FilterBy.VEGAN).url()
+    print(category_2)
+    popularity = Popular.show_all().sort_by(SortBy.POPULARITY).url()
+    print(popularity)
 
