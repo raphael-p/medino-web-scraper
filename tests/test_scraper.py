@@ -1,5 +1,5 @@
 import unittest
-from inventory.scraper import *
+from medproducts.scraper import *
 
 
 class TestUrlBuilder(unittest.TestCase):

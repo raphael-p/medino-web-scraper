@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-from inventory.products import *
+from medproducts.products import *
 
 
 def get_html(url):

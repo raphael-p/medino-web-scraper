@@ -1,5 +1,5 @@
 import unittest
-from inventory.products import *
+from medproducts.products import *
 
 
 class TestBasicFunction(unittest.TestCase):

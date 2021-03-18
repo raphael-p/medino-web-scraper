@@ -1,5 +1,5 @@
 from enum import Enum
-from inventory.scraper import *
+from medproducts.scraper import *
 
 
 BASE_URL = "https://www.medino.com/"
