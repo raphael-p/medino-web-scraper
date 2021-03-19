@@ -25,5 +25,5 @@ class Products:
             output += ",".join(row).replace("£", "") + "\n"
         return output
 
-    def display_as_table(self, v):
-        return tabulate(self.product_list[:v+1], headers="firstrow")
+    def display_as_table(self, max_results):
+        return tabulate(self.product_list[:max_results+1], headers="firstrow")

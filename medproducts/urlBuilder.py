@@ -19,7 +19,8 @@ class UrlBuilder(Enum):
         self._keyword = ""
 
     def __build_url(self):
-        return compose_url(DOMAIN, self.value, q=self._keyword, up_to_page=self.__page_limit,
+        return compose_url(DOMAIN, self.value,
+                           q=self._keyword, up_to_page=self.__page_limit,
                            sort_by=self.__sort_by, tag=self.__filter_by)
 
     # setters for search filters
@@ -41,7 +42,7 @@ class UrlBuilder(Enum):
 
     def url(self):
         """
-        For use in unit testing
+        Getter method for url, for use in unit testing
         :return: url
         :rtype: String
         """
@@ -100,8 +101,13 @@ def compose_url(domain, path, **params):
 
 
 if __name__ == "__main__":
-    search = Search.search_by("hi").filter_by(FilterBy.VEGAN).url()
+    Browse.P
+    search = Search.query("hi").filter_by(FilterBy.VEGAN).url()
     print(search)
     # popularity = UrlBuilder.Browse.popular().sort_by(SortBy.POPULARITY).url()
     # print(popularity)
+    Browse.ALLERGY_AND_HAYFEVER\
+        .sort_by(SortBy.PRICE_LOW_TO_HIGH).filter_by(FilterBy.FOR_MEN)\
+        .display_as_table(10)
+
 
