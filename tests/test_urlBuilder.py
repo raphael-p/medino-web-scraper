@@ -12,7 +12,8 @@ class TestUrlBuilder(unittest.TestCase):
         url = Search.query("allergy") \
             .sort_by(SortBy.PRICE_HIGH_TO_LOW).sort_by(SortBy.PRICE_LOW_TO_HIGH) \
             .filter_by(FilterBy.FOR_CHILDREN).filter_by(FilterBy.VEGETARIAN).url()
-        self.assertTrue(url == "https://www.medino.com/search?q=allergy&up-to-page=10&sort-by=price-low-to-high&tag=vegetarian")
+        self.assertTrue(url == "https://www.medino.com/search"
+                               "?q=allergy&up-to-page=10&sort-by=price-low-to-high&tag=vegetarian")
 
     def test_category_two_categories(self):
         url = Browse.ACHES_AND_PAINS.ACCESSORIES.url()
@@ -22,7 +23,8 @@ class TestUrlBuilder(unittest.TestCase):
         url = Browse.ALLERGY_AND_HAYFEVER\
             .sort_by(SortBy.PRICE_LOW_TO_HIGH).filter_by(FilterBy.FOR_MEN)\
             .sort_by(SortBy.ALPHABETICAL).filter_by(FilterBy.VEGAN).url()
-        self.assertTrue(url == "https://www.medino.com/category/allergy-and-hayfever?up-to-page=10&sort-by=alphabetical&tag=vegan")
+        self.assertTrue(url == "https://www.medino.com/category/allergy-and-hayfever"
+                               "?up-to-page=10&sort-by=alphabetical&tag=vegan")
 
     def test_popularity_with_sort(self):
         url = Browse.POPULAR.sort_by(SortBy.POPULARITY).filter_by(None).url()

@@ -101,13 +101,6 @@ def compose_url(domain, path, **params):
 
 
 if __name__ == "__main__":
-    Browse.P
-    search = Search.query("hi").filter_by(FilterBy.VEGAN).url()
-    print(search)
-    # popularity = UrlBuilder.Browse.popular().sort_by(SortBy.POPULARITY).url()
-    # print(popularity)
-    Browse.ALLERGY_AND_HAYFEVER\
-        .sort_by(SortBy.PRICE_LOW_TO_HIGH).filter_by(FilterBy.FOR_MEN)\
-        .display_as_table(10)
-
+    print(FilterBy[None])
+    "a".upper()
 

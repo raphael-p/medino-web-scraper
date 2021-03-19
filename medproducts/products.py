@@ -19,10 +19,14 @@ class Products:
             for row in self.product_list:
                 write.writerow([entry.replace("£", "") for entry in row])
 
-    def display_as_csv(self, max_results):
+    def display_as_csv(self, max_results, start_row=1):
         output = ""
-        for row in self.product_list[1:max_results+1]:
-            output += ",".join(row).replace("£", "") + "\n"
+        if max_results:
+            for row in self.product_list[start_row:max_results+1]:
+                output += ",".join(row).replace("£", "") + "\n"
+        else:
+            for row in self.product_list[start_row:]:
+                output += ",".join(row).replace("£", "") + "\n"
         return output
 
     def display_as_table(self, max_results):
