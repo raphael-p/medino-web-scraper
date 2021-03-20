@@ -1,4 +1,5 @@
 # medproducts
+Author: Raphaël Piccolin
 
 ## Description
 
