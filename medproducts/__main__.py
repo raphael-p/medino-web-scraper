@@ -20,7 +20,7 @@ pass_config = click.make_pass_decorator(Config, ensure=True)
               help='The maximum number of results to display')
 @click.option('-s', '--sort', default=None, type=click.Choice([s.name.lower() for s in SortBy]))
 @click.option('-t', '--tag', default=None, type=click.Choice([f.name.lower() for f in FilterBy]))
-@click.option('-f', '--file', default='-', type=click.File('w'),
+@click.option('-f', '--file', default=None, type=click.File('w'),
               help='File in which to store the results as comma separated values')
 @click.option('-p', '--pretty', is_flag=True, default=False, show_default=True,
               help='An option to display the results in a table rather than as a csv')
@@ -36,7 +36,7 @@ def main(config, n, sort, tag, file, pretty):
 
 
 @main.command()
-@click.argument('page', type=click.Choice([b.name for b in Browse]))
+@click.argument('page', type=click.Choice([b.name.lower() for b in Browse]))
 @pass_config
 def browse(config, page):
     """[popular|accessories|aches_and_pains|allergy_and_hayfever]"""

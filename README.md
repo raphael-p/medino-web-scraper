@@ -8,30 +8,32 @@ and then gets the names and prices of all the products in the webpage (up to a l
 
 ## Installation Instructions
 
-### pip
-
-In a python 3 environment with pip installed (we recommend using a virtual environment), simply run the following:
-
-```bash
-pip install medproducts
-```
-
-The project is then fetched from https://pypi.org
-
-### manual
-
-Navigate to this project's root directory (where this file is located), and run
+In a python 3 environment with pip installed (we recommend using a virtual environment), navigate to the project's
+root directory and run the following:
 
 ```bash
-python setup.py install
+pip install .
 ```
 
 
-### Usage Instructions
+## Usage Instructions
 
-#### Command Line Interface
+### Command Line Interface
 
-#### Library
+To get information on available parameters, use
+
+```bash
+medproducts --help
+```
+
+As an example, the following query displays 5 accessories 
+with the tag 'for women' in alphabetical order in a table.
+
+```bash
+medproducts -p -n 5 -s alphabetical -t for_women browse accessories
+```
+
+### Library
 
 To use this within a python script, add the following import statement:
 
@@ -63,14 +65,18 @@ Then, add sorting or filtering to your query:
     * example `.filter_by(FilterBy.FOR_CHILDREN)`
     * options: FOR_CHILDREN, FOR_MEN, FOR_WOMEN, VEGAN, VEGETARIAN
     
-Finally, choose how the data is to be outputted:
-* Save: use the `save_as_csv()` method and pass in a filepath
-* Display as CSV: use the `display_as_csv()` method and pass in the 
-maximum number of results
-* Display as table: use the `display_as_table()` method and pass in the 
-maximum number of results
-* Display as python dictionary: use the `product_list` variable
+Finally, choose how to format the results:
+* Save to file: invoke the `save_as_csv()` method
+* CSV: invoke the `display_as_csv()` method
+* Table: invoke the `display_as_table()` method
+* Python dictionary: use the `product_list` variable
 
+## Running Tests
+
+In the root directory of this project run the command
+```bash
+python -m unittest discover -v
+```
     
 
  
